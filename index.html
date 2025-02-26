@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #34495e;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #bdc3c7;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #1abc9c;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #16a085;
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Unit Converter</h1>
+    <label for="category">Select Category:</label>
+    <select id="category">
+      <option value="length">Length</option>
+      <option value="weight">Weight</option>
+      <option value="temperature">Temperature</option>
+      <option value="volume">Volume</option>
+      <option value="time">Time</option>
+      <option value="area">Area</option>
+      <option value="speed">Speed</option>
+      <option value="energy">Energy</option>
+    </select>
+
+    <label for="fromUnit">From Unit:</label>
+    <select id="fromUnit"></select>
+
+    <label for="toUnit">To Unit:</label>
+    <select id="toUnit"></select>
+
+    <label for="inputValue">Enter Value:</label>
+    <input type="number" id="inputValue" placeholder="Enter value">
+
+    <button onclick="convert()">Convert</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const units = {
+      length: [
+        { name: "Meters", value: "meters", symbol: "m" },
+        { name: "Kilometers", value: "kilometers", symbol: "km" },
+        { name: "Centimeters", value: "centimeters", symbol: "cm" },
+        { name: "Millimeters", value: "millimeters", symbol: "mm" },
+        { name: "Feet", value: "feet", symbol: "ft" },
+        { name: "Miles", value: "miles", symbol: "mi" },
+        { name: "Inches", value: "inches", symbol: "in" },
+        { name: "Yards", value: "yards", symbol: "yd" }
+      ],
+      weight: [
+        { name: "Grams", value: "grams", symbol: "g" },
+        { name: "Kilograms", value: "kilograms", symbol: "kg" },
+        { name: "Milligrams", value: "milligrams", symbol: "mg" },
+        { name: "Pounds", value: "pounds", symbol: "lb" },
+        { name: "Ounces", value: "ounces", symbol: "oz" },
+        { name: "Tons", value: "tons", symbol: "t" }
+      ],
+      temperature: [
+        { name: "Celsius", value: "celsius", symbol: "°C" },
+        { name: "Fahrenheit", value: "fahrenheit", symbol: "°F" },
+        { name: "Kelvin", value: "kelvin", symbol: "K" }
+      ],
+      volume: [
+        { name: "Liters", value: "liters", symbol: "L" },
+        { name: "Milliliters", value: "milliliters", symbol: "mL" },
+        { name: "Gallons", value: "gallons", symbol: "gal" },
+        { name: "Cubic Meters", value: "cubicMeters", symbol: "m³" }
+      ],
+      time: [
+        { name: "Seconds", value: "seconds", symbol: "s" },
+        { name: "Minutes", value: "minutes", symbol: "min" },
+        { name: "Hours", value: "hours", symbol: "hr" },
+        { name: "Days", value: "days", symbol: "d" },
+        { name: "Weeks", value: "weeks", symbol: "wk" },
+        { name: "Months", value: "months", symbol: "mo" },
+        { name: "Years", value: "years", symbol: "yr" }
+      ],
+      area: [
+        { name: "Square Meters", value: "squareMeters", symbol: "m²" },
+        { name: "Square Kilometers", value: "squareKilometers", symbol: "km²" },
+        { name: "Square Feet", value: "squareFeet", symbol: "ft²" },
+        { name: "Square Miles", value: "squareMiles", symbol: "mi²" },
+        { name: "Acres", value: "acres", symbol: "ac" },
+        { name: "Hectares", value: "hectares", symbol: "ha" }
+      ],
+      speed: [
+        { name: "Meters per Second", value: "metersPerSecond", symbol: "m/s" },
+        { name: "Kilometers per Hour", value: "kilometersPerHour", symbol: "km/h" },
+        { name: "Miles per Hour", value: "milesPerHour", symbol: "mph" },
+        { name: "Feet per Second", value: "feetPerSecond", symbol: "ft/s" },
+        { name: "Knots", value: "knots", symbol: "kn" }
+      ],
+      energy: [
+        { name: "Joules", value: "joules", symbol: "J" },
+        { name: "Kilojoules", value: "kilojoules", symbol: "kJ" },
+        { name: "Calories", value: "calories", symbol: "cal" },
+        { name: "Kilocalories", value: "kilocalories", symbol: "kcal" },
+        { name: "Kilowatt-hours", value: "kilowattHours", symbol: "kWh" }
+      ]
+    };
+
+    const fromUnit = document.getElementById("fromUnit");
+    const toUnit = document.getElementById("toUnit");
+    const category = document.getElementById("category");
+
+    // Populate units based on category
+    function populateUnits() {
+      const selectedCategory = category.value;
+      const unitList = units[selectedCategory];
+
+      fromUnit.innerHTML = unitList.map(unit => `<option value="${unit.value}">${unit.name}</option>`).join("");
+      toUnit.innerHTML = unitList.map(unit => `<option value="${unit.value}">${unit.name}</option>`).join("");
+    }
+
+    // Initial population
+    populateUnits();
+
+    // Update units when category changes
+    category.addEventListener("change", populateUnits);
+
+    // Conversion logic
+    function convert() {
+      const inputValue = parseFloat(document.getElementById("inputValue").value);
+      const from = fromUnit.value;
+      const to = toUnit.value;
+      const categoryType = category.value;
+
+      let result;
+
+      if (categoryType === "length") {
+        result = convertLength(inputValue, from, to);
+      } else if (categoryType === "weight") {
+        result = convertWeight(inputValue, from, to);
+      } else if (categoryType === "temperature") {
+        result = convertTemperature(inputValue, from, to);
+      } else if (categoryType === "volume") {
+        result = convertVolume(inputValue, from, to);
+      } else if (categoryType === "time") {
+        result = convertTime(inputValue, from, to);
+      } else if (categoryType === "area") {
+        result = convertArea(inputValue, from, to);
+      } else if (categoryType === "speed") {
+        result = convertSpeed(inputValue, from, to);
+      } else if (categoryType === "energy") {
+        result = convertEnergy(inputValue, from, to);
+      }
+
+      // Get the symbol for the "to" unit
+      const toSymbol = units[categoryType].find(unit => unit.value === to).symbol;
+
+      // Display the result with the unit symbol
+      document.getElementById("result").innerText = `Result: ${result.toFixed(2)}${toSymbol}`;
+    }
+
+    // Length conversion
+    function convertLength(value, from, to) {
+      const conversions = {
+        meters: 1,
+        kilometers: 0.001,
+        centimeters: 100,
+        millimeters: 1000,
+        feet: 3.28084,
+        miles: 0.000621371,
+        inches: 39.3701,
+        yards: 1.09361
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Weight conversion
+    function convertWeight(value, from, to) {
+      const conversions = {
+        grams: 1,
+        kilograms: 0.001,
+        milligrams: 1000,
+        pounds: 0.00220462,
+        ounces: 0.035274,
+        tons: 0.000001
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Temperature conversion
+    function convertTemperature(value, from, to) {
+      if (from === to) return value;
+
+      if (from === "celsius") {
+        if (to === "fahrenheit") return (value * 9/5) + 32;
+        if (to === "kelvin") return value + 273.15;
+      } else if (from === "fahrenheit") {
+        if (to === "celsius") return (value - 32) * 5/9;
+        if (to === "kelvin") return (value - 32) * 5/9 + 273.15;
+      } else if (from === "kelvin") {
+        if (to === "celsius") return value - 273.15;
+        if (to === "fahrenheit") return (value - 273.15) * 9/5 + 32;
+      }
+      return value;
+    }
+
+    // Volume conversion
+    function convertVolume(value, from, to) {
+      const conversions = {
+        liters: 1,
+        milliliters: 1000,
+        gallons: 0.264172,
+        cubicMeters: 0.001
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Time conversion
+    function convertTime(value, from, to) {
+      const conversions = {
+        seconds: 1,
+        minutes: 1 / 60,
+        hours: 1 / 3600,
+        days: 1 / 86400,
+        weeks: 1 / 604800,
+        months: 1 / 2628000,
+        years: 1 / 31536000
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Area conversion
+    function convertArea(value, from, to) {
+      const conversions = {
+        squareMeters: 1,
+        squareKilometers: 0.000001,
+        squareFeet: 10.7639,
+        squareMiles: 0.000000386102,
+        acres: 0.000247105,
+        hectares: 0.0001
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Speed conversion
+    function convertSpeed(value, from, to) {
+      const conversions = {
+        metersPerSecond: 1,
+        kilometersPerHour: 3.6,
+        milesPerHour: 2.23694,
+        feetPerSecond: 3.28084,
+        knots: 1.94384
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Energy conversion
+    function convertEnergy(value, from, to) {
+      const conversions = {
+        joules: 1,
+        kilojoules: 0.001,
+        calories: 0.239006,
+        kilocalories: 0.000239006,
+        kilowattHours: 0.000000277778
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+  </script>
+</body>
+</html>
