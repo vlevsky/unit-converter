@@ -81,6 +81,12 @@
       <option value="area">Area</option>
       <option value="speed">Speed</option>
       <option value="energy">Energy</option>
+      <option value="pressure">Pressure</option>
+      <option value="power">Power</option>
+      <option value="dataStorage">Data Storage</option>
+      <option value="angle">Angle</option>
+      <option value="frequency">Frequency</option>
+      <option value="fuelConsumption">Fuel Consumption</option>
     </select>
 
     <label for="fromUnit">From Unit:</label>
@@ -158,6 +164,44 @@
         { name: "Calories", value: "calories", symbol: "cal" },
         { name: "Kilocalories", value: "kilocalories", symbol: "kcal" },
         { name: "Kilowatt-hours", value: "kilowattHours", symbol: "kWh" }
+      ],
+      pressure: [
+        { name: "Pascals", value: "pascals", symbol: "Pa" },
+        { name: "Kilopascals", value: "kilopascals", symbol: "kPa" },
+        { name: "Atmospheres", value: "atmospheres", symbol: "atm" },
+        { name: "Bars", value: "bars", symbol: "bar" },
+        { name: "Millimeters of Mercury", value: "mmHg", symbol: "mmHg" },
+        { name: "Pounds per Square Inch", value: "psi", symbol: "psi" }
+      ],
+      power: [
+        { name: "Watts", value: "watts", symbol: "W" },
+        { name: "Kilowatts", value: "kilowatts", symbol: "kW" },
+        { name: "Megawatts", value: "megawatts", symbol: "MW" },
+        { name: "Horsepower", value: "horsepower", symbol: "hp" }
+      ],
+      dataStorage: [
+        { name: "Bits", value: "bits", symbol: "b" },
+        { name: "Bytes", value: "bytes", symbol: "B" },
+        { name: "Kilobytes", value: "kilobytes", symbol: "KB" },
+        { name: "Megabytes", value: "megabytes", symbol: "MB" },
+        { name: "Gigabytes", value: "gigabytes", symbol: "GB" },
+        { name: "Terabytes", value: "terabytes", symbol: "TB" }
+      ],
+      angle: [
+        { name: "Degrees", value: "degrees", symbol: "°" },
+        { name: "Radians", value: "radians", symbol: "rad" },
+        { name: "Gradians", value: "gradians", symbol: "grad" }
+      ],
+      frequency: [
+        { name: "Hertz", value: "hertz", symbol: "Hz" },
+        { name: "Kilohertz", value: "kilohertz", symbol: "kHz" },
+        { name: "Megahertz", value: "megahertz", symbol: "MHz" },
+        { name: "Gigahertz", value: "gigahertz", symbol: "GHz" }
+      ],
+      fuelConsumption: [
+        { name: "Miles per Gallon", value: "mpg", symbol: "mpg" },
+        { name: "Kilometers per Liter", value: "kmpl", symbol: "km/L" },
+        { name: "Liters per 100 Kilometers", value: "lper100km", symbol: "L/100km" }
       ]
     };
 
@@ -205,6 +249,18 @@
         result = convertSpeed(inputValue, from, to);
       } else if (categoryType === "energy") {
         result = convertEnergy(inputValue, from, to);
+      } else if (categoryType === "pressure") {
+        result = convertPressure(inputValue, from, to);
+      } else if (categoryType === "power") {
+        result = convertPower(inputValue, from, to);
+      } else if (categoryType === "dataStorage") {
+        result = convertDataStorage(inputValue, from, to);
+      } else if (categoryType === "angle") {
+        result = convertAngle(inputValue, from, to);
+      } else if (categoryType === "frequency") {
+        result = convertFrequency(inputValue, from, to);
+      } else if (categoryType === "fuelConsumption") {
+        result = convertFuelConsumption(inputValue, from, to);
       }
 
       // Get the symbol for the "to" unit
@@ -317,6 +373,74 @@
         calories: 0.239006,
         kilocalories: 0.000239006,
         kilowattHours: 0.000000277778
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Pressure conversion
+    function convertPressure(value, from, to) {
+      const conversions = {
+        pascals: 1,
+        kilopascals: 0.001,
+        atmospheres: 0.00000986923,
+        bars: 0.00001,
+        mmHg: 0.00750062,
+        psi: 0.000145038
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Power conversion
+    function convertPower(value, from, to) {
+      const conversions = {
+        watts: 1,
+        kilowatts: 0.001,
+        megawatts: 0.000001,
+        horsepower: 0.00134102
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Data Storage conversion
+    function convertDataStorage(value, from, to) {
+      const conversions = {
+        bits: 1,
+        bytes: 0.125,
+        kilobytes: 0.0001220703125,
+        megabytes: 0.00000011920928955078,
+        gigabytes: 0.00000000011641532182693,
+        terabytes: 0.00000000000011368683772162
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Angle conversion
+    function convertAngle(value, from, to) {
+      const conversions = {
+        degrees: 1,
+        radians: 0.0174533,
+        gradians: 1.11111
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Frequency conversion
+    function convertFrequency(value, from, to) {
+      const conversions = {
+        hertz: 1,
+        kilohertz: 0.001,
+        megahertz: 0.000001,
+        gigahertz: 0.000000001
+      };
+      return value * (conversions[to] / conversions[from]);
+    }
+
+    // Fuel Consumption conversion
+    function convertFuelConsumption(value, from, to) {
+      const conversions = {
+        mpg: 1,
+        kmpl: 0.425144,
+        lper100km: 235.214583
       };
       return value * (conversions[to] / conversions[from]);
     }
